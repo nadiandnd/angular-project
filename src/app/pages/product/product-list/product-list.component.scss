@@ -1,0 +1,27 @@
+.table-container {
+  width: 100%;
+  .product-table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+    margin: 0 auto;
+    thead {
+      background-color: #fff;
+    }
+    tbody {
+      display: block;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+    th,
+    td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+  }
+}

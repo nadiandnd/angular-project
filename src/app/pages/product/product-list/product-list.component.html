@@ -1,0 +1,23 @@
+<div class="table-container">
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+
+    @if(productData) {
+    <tbody>
+      @for(data of productData; track data.name) {
+      <tr>
+        <td>{{ data?.name }}</td>
+        <td>{{ data?.price }}</td>
+        <td>{{ data?.category }}</td>
+      </tr>
+      }
+    </tbody>
+    }
+  </table>
+</div>
