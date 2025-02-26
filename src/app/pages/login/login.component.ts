@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { UsernameValidators } from '../../shared/utility/validators';
+import { FormErrorComponent } from '../../shared/component/form-error/form-error.component';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [FormErrorComponent, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -37,8 +43,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    localStorage.setItem('Bearer Token', 'token123');
     if (this.loginForm.valid) {
     }
+  }
+
+  logout() {
+    localStorage.removeItem('Bearer Token');
   }
 
   handleLoginError(error: any) {

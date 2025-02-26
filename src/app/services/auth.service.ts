@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAccessTokenResp } from '../shared/models/typings';
 import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +11,18 @@ import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs';
 export class AuthService {
   private authSecretKey = 'Bearer Token';
 
-  constructor(public router: Router, public httpClient: HttpClient) {}
+  constructor(
+    public router: Router,
+    public httpClient: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {}
 
   isLoggedIn(): boolean {
-    const token = localStorage.getItem(this.authSecretKey);
-    return !!token;
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem(this.authSecretKey);
+      return !!token;
+    }
+    return false;
   }
 
   login(payload: { username: string; password: string }) {

@@ -15,14 +15,11 @@ export const routes: Routes = [
   },
   {
     path: 'product',
-    loadChildren: () =>
-      import('./pages/product/product.component').then(
-        (m) => m.ProductComponent
-      ),
-    canMatch: [authGuard],
+    component: ProductComponent,
+    canActivate: [authGuard],
   },
   {
     path: '**',
-    component: ProductComponent,
+    component: LoginComponent,
   },
 ];

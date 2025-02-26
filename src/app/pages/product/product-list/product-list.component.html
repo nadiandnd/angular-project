@@ -8,9 +8,9 @@
       </tr>
     </thead>
 
-    @if(productData) {
+    @if(productData$ | async) {
     <tbody>
-      @for(data of productData; track data.name) {
+      @for(data of (productData$ | async); track data.name) {
       <tr>
         <td>{{ data?.name }}</td>
         <td>{{ data?.price }}</td>

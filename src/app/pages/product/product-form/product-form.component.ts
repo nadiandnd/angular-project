@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   FormArray,
   ReactiveFormsModule,
-  FormControl,
 } from '@angular/forms';
-import { ProductService } from '../../../services/product.service';
+
+import { Store } from '@ngxs/store';
+import { AddProduct } from '../../../store/product.action';
 
 @Component({
   selector: 'app-product-form',
@@ -23,10 +24,7 @@ export class ProductFormComponent implements OnInit {
     'Home Appliances',
     'Books',
   ];
-  constructor(
-    private fb: FormBuilder,
-    private productService: ProductService
-  ) {}
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     this.addProductForm = this.fb.group({
@@ -51,8 +49,7 @@ export class ProductFormComponent implements OnInit {
 
   onSubmit() {
     if (this.addProductForm.valid) {
-      console.log(this.addProductForm.value);
-      this.productService.addProduct(this.addProductForm.value);
+      this.store.dispatch(new AddProduct(this.addProductForm.value));
     }
   }
 }

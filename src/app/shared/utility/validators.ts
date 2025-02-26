@@ -24,7 +24,7 @@ export const UsernameValidators = {
   characterRange:
     (min: number, max: number): ValidatorFn =>
     (control: AbstractControl) => {
-      const value = control?.value.toSring() ?? '';
+      const value = control?.value.toString() ?? '';
       const invalidRange =
         (value as string).length < min || (value as string).length > max;
       return invalidRange ? { invalidRange } : null;
