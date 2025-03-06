@@ -22,3 +22,26 @@ export interface IProduct {
   category: string;
   attribute: string[];
 }
+
+export interface User {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  website: string;
+}
+
+export interface ToDo {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+export interface ToDoState {
+  isLoading: boolean;
+  currentMember: User | undefined;
+  memberToDos: ToDo[];
+  incompleteOnly: boolean;
+  error: string | null;
+}
