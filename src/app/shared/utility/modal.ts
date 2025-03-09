@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -12,21 +11,24 @@ import {
     <div>
       <h2 mat-dialog-title>{{ data.title }}</h2>
       <mat-dialog-content>
+        @if (data.content) {
         <p>{{ data.content }}</p>
+        }
       </mat-dialog-content>
       <mat-dialog-actions>
+        @for (btn of data.btnList; track btn.label) {
         <button
-          *ngFor="let btn of data.btnList"
           mat-button
           [style.width.%]="btnWidth"
           (click)="executeAction(btn)"
         >
           {{ btn.label }}
         </button>
+        }
       </mat-dialog-actions>
     </div>
   `,
-  imports: [CommonModule, MatDialogModule],
+  imports: [MatDialogModule],
 })
 export class AlertDialog implements OnInit {
   public btnWidth = 100;
