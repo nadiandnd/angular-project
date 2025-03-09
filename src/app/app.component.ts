@@ -7,6 +7,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { filter, map, tap } from 'rxjs';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +20,16 @@ export class AppComponent implements OnInit {
   constructor(
     private title: Title,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.changePageTitle();
+  }
+
+  get isLoggedIn() {
+    return this.authService.isLoggedIn();
   }
 
   changePageTitle() {
@@ -56,5 +62,9 @@ export class AppComponent implements OnInit {
     }
 
     return 'Practice Project';
+  }
+
+  logout() {
+    this.authService.logout().subscribe();
   }
 }

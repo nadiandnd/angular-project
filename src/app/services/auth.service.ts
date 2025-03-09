@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAccessTokenResp } from '../shared/models/typings';
-import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { finalize, shareReplay, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,18 +10,11 @@ import { isPlatformBrowser } from '@angular/common';
 export class AuthService {
   private authSecretKey = 'Bearer Token';
 
-  constructor(
-    public router: Router,
-    public httpClient: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: object
-  ) {}
+  constructor(public router: Router, public httpClient: HttpClient) {}
 
   isLoggedIn(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem(this.authSecretKey);
-      return !!token;
-    }
-    return false;
+    const token = localStorage.getItem(this.authSecretKey);
+    return !!token;
   }
 
   login(payload: { username: string; password: string }) {
@@ -39,9 +31,14 @@ export class AuthService {
             return this.verifyPolicyVersion();
           }
         }),
-        finalize(() => {}),
+        finalize(() => this.mockLoggedIn()),
         shareReplay()
       );
+  }
+
+  private mockLoggedIn() {
+    localStorage.setItem(this.authSecretKey, 'token12345');
+    this.router.navigate(['/product']);
   }
 
   private handleLoginSuccess(response: IAccessTokenResp) {
@@ -61,10 +58,13 @@ export class AuthService {
   }
 
   logout() {
-    this.httpClient.post(`/api/logout`, {}).pipe(
-      tap(() => localStorage.removeItem(this.authSecretKey)),
-      catchError((error) => (window.location.href = error.url)),
-      finalize(() => this.router.navigate(['/login']))
+    console.log('logged out');
+    return this.httpClient.post(`/api/logout`, {}).pipe(
+      // catchError((error) => (window.location.href = error.url)),
+      finalize(() => {
+        localStorage.removeItem(this.authSecretKey);
+        this.router.navigate(['/login']);
+      })
     );
   }
 }
