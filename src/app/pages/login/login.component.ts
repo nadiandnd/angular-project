@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
   }
 
   confirmAction() {
-    this.dialog.getDialogById('confirmation')?.close();
+    // this.dialog.getDialogById('confirmation')?.close();
     this.authService.login(this.loginForm.value).subscribe();
   }
 
