@@ -2,13 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAccessTokenResp } from '../shared/models/typings';
-import { finalize, shareReplay, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  finalize,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private authSecretKey = 'Bearer Token';
+  private refreshTokenKey = 'refresh_token';
+  private refreshing$: Observable<string> | null = null;
 
   constructor(public router: Router, public httpClient: HttpClient) {}
 
@@ -66,5 +77,42 @@ export class AuthService {
         this.router.navigate(['/login']);
       })
     );
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem(this.authSecretKey);
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.refreshTokenKey);
+  }
+
+  refreshAccessToken(): Observable<string> {
+    if (this.refreshing$) {
+      return this.refreshing$; // If we're already refreshing the token (refreshing$ is set), just return that same Observable.
+    }
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    this.refreshing$ = this.httpClient
+      .post<IAccessTokenResp>('/auth/refresh', { refreshToken })
+      .pipe(
+        tap((response) => this.handleLoginSuccess(response)),
+        map((response) => response.access_token),
+        shareReplay(1), // 🔁 Share the result with all subscribers
+        catchError((error) => {
+          this.logout();
+          return throwError(() => error);
+        }),
+        finalize(() => {
+          this.refreshing$ = null; // reset for next time
+        })
+      );
+
+    return this.refreshing$;
   }
 }
